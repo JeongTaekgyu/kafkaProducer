@@ -49,11 +49,23 @@ public class KafkaConfig {
         return new DefaultKafkaConsumerFactory<>(myConfig);
     }
 
+    // 주요 역할
+    // 1. Kafka 메시지 리스너 설정
+    // kafkaListenerContainerFactory는 Kafka 메시지를 비동기적으로 수신할 리스너를 생성하고 설정하는 데 사용된다.
     // Kafka 브로커로부터 메시지를 수신할 컨테이너를 관리한다.
-    // ConsumerFactory를 지정해 주는 것이다. 그러면 그 리스너가 그 ConsumerFactory를 사용해서 concurrent하게 데이터를 가져온다.
+    // Spring Kafka는 @KafkaListener를 기반으로 메시지 리스너 컨테이너를 생성하는데, 이 컨테이너를 만들기 위해 kafkaListenerContainerFactory를 사용한다.
+    // 리스너 컨테이너는 Kafka 소비자(Consumer)의 실행 환경을 제공한다 - 병렬 처리를 위한 스레드 관리, 오류 처리, 메시지 변환 등을 설정할 수 있다.
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+
+        // 2. 동시성 지원
+        // ConcurrentKafkaListenerContainerFactory는 여러 쓰레드에서 동시에 메시지를 처리할 수 있도록 설계된 리스너 컨테이너를 제공한다.
+        // 이를 통해 높은 메시지 처리량을 처리할 수 있다.
         ConcurrentKafkaListenerContainerFactory<String, Object> myfactory = new ConcurrentKafkaListenerContainerFactory<>();
+
+        // 3. 메시지를 가져오는 데 사용할 Kafka Consumer를 설정한다.
+        // 이 ConsumerFactory()는 Kafka 클라이언트의 소비자(consumer) 설정을 정의한 팩토리이다.
+        // ConsumerFactory를 지정해 주는 것이다. 그러면 그 리스너가 그 ConsumerFactory를 사용해서 concurrent하게 데이터를 가져온다.
         myfactory.setConsumerFactory(ConsumerFactory());
         return myfactory;
     }
