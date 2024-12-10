@@ -27,7 +27,7 @@ public class StreamService {
         // 결과적으로 defaultTopic에 있는 데이터를 읽어와서 freeClass라는 단어가 포함된 데이터만 필터링해서 freeClassList라는 토픽으로 보낸다.
 
         // 2. join 기능 실습
-        KStream<String, String> leftStream = sb.stream("leftTopic", Consumed.with(STRING_SERDE, STRING_SERDE));
+/*        KStream<String, String> leftStream = sb.stream("leftTopic", Consumed.with(STRING_SERDE, STRING_SERDE));
 //        // key:value --> 1:leftValue
         KStream<String, String> rightStream = sb.stream("rightTopic", Consumed.with(STRING_SERDE, STRING_SERDE));
 //        // key:value --> 1:rightValue
@@ -50,6 +50,6 @@ public class StreamService {
 
         joinedStream.print(Printed.toSysOut());
         joinedStream.to("joinedMsg");
-        outerJoinedStream.to("joinedMsg");
+        outerJoinedStream.to("joinedMsg");*/
     }
 }
