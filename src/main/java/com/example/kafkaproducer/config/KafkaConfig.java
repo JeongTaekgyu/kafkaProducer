@@ -1,5 +1,9 @@
 package com.example.kafkaproducer.config;
 
+import com.example.kafkaproducer.util.PurchaseLogOneProductSerializer;
+import com.example.kafkaproducer.util.PurchaseLogSerializer;
+import com.example.kafkaproducer.util.WatchingAdLogSerializer;
+import com.example.kafkaproducer.vo.WatchingAdLog;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.TopicConfig;
@@ -42,8 +46,13 @@ public class KafkaConfig {
     // 이 패턴이 템플릿을 만들고 커넥션 정보가 들어간 configuration을 만든다.
     // 그리고 그 configuration 메서드(여기서는 ProducerFactory())를 호출해서
     // 객체(여기선DefaultKafkaProducerFactory)를 받아서 템플릿을 형성한다.
-    /*@Bean
+    @Bean
     public KafkaTemplate<String, Object> KafkaTemplate() {
+        return new KafkaTemplate<String, Object>(ProducerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<String, Object> KafkaTemplateForGeneral() {
         return new KafkaTemplate<String, Object>(ProducerFactory());
     }
 
@@ -55,11 +64,44 @@ public class KafkaConfig {
         // 임의 로 아무 ip나 넣었는데 이거는 public ip를 넣어야한다. 왜냐하면 aws 안에서 돌리는게 아니여서 public ip를 넣는다.
         myConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "43.201.63.197, 54.180.249.253, 52.79.111.19");
         myConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        myConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+//        myConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        myConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, PurchaseLogOneProductSerializer.class);
+
 
         return new DefaultKafkaProducerFactory<>(myConfig);
     }
 
+    @Bean
+    public KafkaTemplate<String, Object> KafkaTemplateForWatchingAdLog() {
+        return new KafkaTemplate<String, Object>(ProducerFactoryForWatchingAdLog());
+    }
+    @Bean
+    public ProducerFactory<String, Object> ProducerFactoryForWatchingAdLog() {
+        Map<String, Object> myConfig = new HashMap<>();
+
+        myConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "13.125.205.11:9092, 3.36.63.75:9092, 54.180.1.108:9092");
+        myConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        myConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, WatchingAdLogSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(myConfig);
+    }
+
+    @Bean
+    public KafkaTemplate<String, Object> KafkaTemplateForPurchaseLog() {
+        return new KafkaTemplate<String, Object>(ProducerFactoryForPurchaseLog());
+    }
+    @Bean
+    public ProducerFactory<String, Object> ProducerFactoryForPurchaseLog() {
+        Map<String, Object> myConfig = new HashMap<>();
+
+        myConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "13.125.205.11:9092, 3.36.63.75:9092, 54.180.1.108:9092");
+        myConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        myConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, PurchaseLogSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(myConfig);
+    }
+
+    /*
     @Bean
     public ConsumerFactory<String, Object> ConsumerFactory() {
         Map<String, Object> myConfig = new HashMap<>();
